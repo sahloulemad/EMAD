@@ -35,7 +35,7 @@ class DataProvider with ChangeNotifier {
 
   Future<void> _loadData() async {
     final prefs = await SharedPreferences.getInstance();
-    
+
     final networksJson = prefs.getString('networks');
     if (networksJson != null) {
       final List<dynamic> networksList = json.decode(networksJson);
@@ -59,17 +59,12 @@ class DataProvider with ChangeNotifier {
 
   Future<void> _saveData() async {
     final prefs = await SharedPreferences.getInstance();
-    
-    await prefs.setString('networks', 
-        json.encode(_networks.map((e) => e.toJson()).toList()));
-    await prefs.setString('apps', 
-        json.encode(_apps.map((e) => e.toJson()).toList()));
-    await prefs.setString('speedLimits', 
-        json.encode(_speedLimits.map((e) => e.toJson()).toList()));
+    await prefs.setString('networks', json.encode(_networks.map((e) => e.toJson()).toList()));
+    await prefs.setString('apps', json.encode(_apps.map((e) => e.toJson()).toList()));
+    await prefs.setString('speedLimits', json.encode(_speedLimits.map((e) => e.toJson()).toList()));
   }
 
   Future<void> _generateSampleData() async {
-// Generate sample networks
     _networks = [
       _createSampleNetwork('1', 'شبكة المنزل', 'HomeWiFi', true, 85, 'WPA2'),
       _createSampleNetwork('2', 'شبكة العمل', 'OfficeNet', false, 65, 'WPA3'),
@@ -77,7 +72,6 @@ class DataProvider with ChangeNotifier {
       _createSampleNetwork('4', 'الشبكة المحمولة', 'MobileHotspot', false, 70, 'WPA2'),
     ];
 
-    // Generate sample apps
     _apps = [
       _createSampleApp('1', 'واتساب', 'com.whatsapp', '📱', false),
       _createSampleApp('2', 'يوتيوب', 'com.google.android.youtube', '📺', false),
@@ -95,9 +89,11 @@ class DataProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  NetworkModel _createSampleNetwork(String id, String name, String ssid, 
+  NetworkModel _createSampleNetwork(String id, String name, String ssid,
       bool isConnected, int signalStrength, String securityType) {
-Map<String, DataUsage> generateUsageData(int days) {
+    Map<String, DataUsage> generateUsageData(int days) {
+      final now = DateTime.now();
+      final random = Random();
       Map<String, DataUsage> usage = {};
       for (int i = 0; i < days; i++) {
         final date = now.subtract(Duration(days: i));
@@ -124,9 +120,11 @@ Map<String, DataUsage> generateUsageData(int days) {
     );
   }
 
-  AppModel _createSampleApp(String id, String name, String packageName, 
+  AppModel _createSampleApp(String id, String name, String packageName,
       String icon, bool isSystemApp) {
-Map<String, DataUsage> generateUsageData(int days) {
+    Map<String, DataUsage> generateUsageData(int days) {
+      final now = DateTime.now();
+      final random = Random();
       Map<String, DataUsage> usage = {};
       for (int i = 0; i < days; i++) {
         final date = now.subtract(Duration(days: i));
@@ -204,13 +202,13 @@ Map<String, DataUsage> generateUsageData(int days) {
 
   List<AppModel> getFilteredApps(String query) {
     if (query.isEmpty) return _apps;
-    return _apps.where((app) => 
+    return _apps.where((app) =>
         app.name.toLowerCase().contains(query.toLowerCase())).toList();
   }
 
   List<NetworkModel> getFilteredNetworks(String query) {
     if (query.isEmpty) return _networks;
-    return _networks.where((network) => 
+    return _networks.where((network) =>
         network.name.toLowerCase().contains(query.toLowerCase()) ||
         network.ssid.toLowerCase().contains(query.toLowerCase())).toList();
   }
